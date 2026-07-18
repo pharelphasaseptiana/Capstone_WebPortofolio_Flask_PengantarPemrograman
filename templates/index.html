@@ -3,7 +3,7 @@
 {% block content %}
 <div class="hero text-center rounded">
 <div class="container">
-<img src="{{ url_for('static', filename='uploads/' + (profile.photo_file if profile else 'default-profile.jpg')) }}" class="rounded-circle mb-3" width="150" height="150" style="object-fit:cover">
+<img src="{{ (profile.photo_file if profile else 'default-profile.jpg') | photo_url }}" class="rounded-circle mb-3" width="150" height="150" style="object-fit:cover">
 <h1>{{ profile.name if profile else 'Nama Anda' }}</h1>
 <p class="lead">{{ profile.headline if profile else 'Web Developer' }}</p>
 <p>{{ profile.about[:100] + '...' if profile and profile.about else 'Selamat datang di portofolio saya.' }}</p>
@@ -16,7 +16,7 @@
 {% for p in projects %}
 <div class="col-md-4 mb-4">
 <div class="card project-card h-100">
-<img src="{{ url_for('static', filename='uploads/' + p.image_file) }}" class="card-img-top" alt="{{ p.title }}">
+<img src="{{ p.image_file | photo_url }}" class="card-img-top" alt="{{ p.title }}">
 <div class="card-body">
 <h5 class="card-title">{{ p.title }}</h5>
 <p class="card-text">{{ p.description[:100] }}...</p>
