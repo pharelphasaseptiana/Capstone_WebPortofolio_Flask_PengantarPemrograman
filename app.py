@@ -7,7 +7,9 @@ from models import db, User, Profile, Skill, Project, Message
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+if not os.environ.get("VERCEL"):
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
