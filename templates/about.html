@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
 <div class="col-md-4 text-center">
-<img src="{{ url_for('static', filename='uploads/' + (profile.photo_file if profile else 'default-profile.jpg')) }}" class="rounded-circle mb-3" width="200" height="200" style="object-fit:cover">
+<img src="{{ (profile.photo_file if profile else 'default-profile.jpg') | photo_url }}" class="rounded-circle mb-3" width="200" height="200" style="object-fit:cover">
 <h3>{{ profile.name if profile else 'Nama Anda' }}</h3>
 <p class="text-muted">{{ profile.headline if profile else 'Web Developer' }}</p>
 </div>
