@@ -1,0 +1,29 @@
+/* Custom styles untuk Portofolio Flask */
+
+body {
+    padding-top: 70px;
+    background-color: #fafafa;
+}
+
+.hero {
+    background: #f8f9fa;
+    padding: 60px 0;
+}
+
+.project-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.project-card {
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    font-size: 0.9rem;
+}
