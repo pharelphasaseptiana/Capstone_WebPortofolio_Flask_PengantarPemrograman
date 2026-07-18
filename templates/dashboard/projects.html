@@ -11,7 +11,7 @@
 <tbody>
 {% for p in projects %}
 <tr>
-<td><img src="{{ url_for('static', filename='uploads/' + p.image_file) }}" width="50" height="50" style="object-fit:cover"></td>
+<td><img src="{{ p.image_file | photo_url }}" width="50" height="50" style="object-fit:cover"></td>
 <td>{{ p.title }}</td>
 <td>{{ p.technologies }}</td>
 <td>
