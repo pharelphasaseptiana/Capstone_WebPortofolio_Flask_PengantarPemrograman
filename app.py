@@ -1,4 +1,6 @@
 import os
+import uuid
+import requests
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 from config import Config
@@ -10,6 +12,59 @@ db.init_app(app)
 
 if not os.environ.get("VERCEL"):
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# --- SUPABASE STORAGE HELPERS ---
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET', 'uploads')
+
+def upload_to_supabase(file_storage, filename):
+    """Upload file ke Supabase Storage, kembalikan URL publiknya."""
+    unique_name = f"{uuid.uuid4().hex}_{filename}"
+    file_bytes = file_storage.read()
+    upload_url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{unique_name}"
+    resp = requests.post(
+        upload_url,
+        headers={
+            'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
+            'Content-Type': file_storage.mimetype or 'application/octet-stream',
+        },
+        data=file_bytes,
+    )
+    resp.raise_for_status()
+    return f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{unique_name}"
+
+def delete_from_supabase(file_url):
+    """Hapus file lama dari Supabase Storage berdasarkan URL publiknya."""
+    if not file_url or f"/storage/v1/object/public/{SUPABASE_BUCKET}/" not in file_url:
+        return
+    object_name = file_url.split(f"/storage/v1/object/public/{SUPABASE_BUCKET}/")[-1]
+    delete_url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{object_name}"
+    try:
+        requests.delete(delete_url, headers={'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}'})
+    except requests.RequestException:
+        pass
+
+@app.template_filter('photo_url')
+def photo_url(value):
+    """Kalau value berupa URL Supabase, pakai langsung.
+    Kalau masih nama file lama (default.jpg dll), pakai folder static lokal."""
+    if not value:
+        value = 'default.jpg'
+    if value.startswith('http://') or value.startswith('https://'):
+        return value
+    return url_for('static', filename='uploads/' + value)
+
+# Pastikan tabel selalu ada, termasuk saat dijalankan sebagai
+# serverless function di Vercel (blok __main__ di bawah tidak
+# pernah tereksekusi di lingkungan itu).
+with app.app_context():
+    db.create_all()
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -97,8 +152,7 @@ def add_project():
         file = request.files.get('image')
         img_name = 'default.jpg'
         if file and allowed_file(file.filename):
-            img_name = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_name))
+            img_name = upload_to_supabase(file, secure_filename(file.filename))
         
         db.session.add(Project(
             title=request.form.get('title'), description=request.form.get('description'),
@@ -121,10 +175,8 @@ def edit_project(id):
         file = request.files.get('image')
         if file and allowed_file(file.filename):
             if project.image_file != 'default.jpg':
-                old_path = os.path.join(app.config['UPLOAD_FOLDER'], project.image_file)
-                if os.path.exists(old_path): os.remove(old_path)
-            project.image_file = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], project.image_file))
+                delete_from_supabase(project.image_file)
+            project.image_file = upload_to_supabase(file, secure_filename(file.filename))
         db.session.commit()
         flash('Proyek berhasil diperbarui!', 'success')
         return redirect(url_for('dashboard_projects'))
@@ -135,8 +187,7 @@ def edit_project(id):
 def delete_project(id):
     project = Project.query.get_or_404(id)
     if project.image_file != 'default.jpg':
-        fpath = os.path.join(app.config['UPLOAD_FOLDER'], project.image_file)
-        if os.path.exists(fpath): os.remove(fpath)
+        delete_from_supabase(project.image_file)
     db.session.delete(project)
     db.session.commit()
     flash('Proyek berhasil dihapus!', 'success')
@@ -161,10 +212,8 @@ def dashboard_profile():
         file = request.files.get('photo')
         if file and allowed_file(file.filename):
             if profile.photo_file != 'default-profile.jpg':
-                old_path = os.path.join(app.config['UPLOAD_FOLDER'], profile.photo_file)
-                if os.path.exists(old_path): os.remove(old_path)
-            profile.photo_file = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], profile.photo_file))
+                delete_from_supabase(profile.photo_file)
+            profile.photo_file = upload_to_supabase(file, secure_filename(file.filename))
         db.session.commit()
         flash('Profil berhasil diperbarui!', 'success')
         return redirect(url_for('dashboard_profile'))
