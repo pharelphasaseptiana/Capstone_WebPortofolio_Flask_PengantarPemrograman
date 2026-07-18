@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Tentang{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-4 text-center">
+<img src="{{ url_for('static', filename='uploads/' + (profile.photo_file if profile else 'default-profile.jpg')) }}" class="rounded-circle mb-3" width="200" height="200" style="object-fit:cover">
+<h3>{{ profile.name if profile else 'Nama Anda' }}</h3>
+<p class="text-muted">{{ profile.headline if profile else 'Web Developer' }}</p>
+</div>
+<div class="col-md-8">
+<h3>Tentang Saya</h3>
+<p>{{ profile.about if profile and profile.about else 'Deskripsi tentang diri Anda.' }}</p>
+
+<h4 class="mt-4">Pendidikan</h4>
+{% if profile and profile.education %}
+<p style="white-space: pre-line">{{ profile.education }}</p>
+{% else %}
+<p class="text-muted">Belum ada riwayat pendidikan.</p>
+{% endif %}
+
+<h4 class="mt-4">Keahlian</h4>
+<div class="d-flex flex-wrap gap-2">
+{% for skill in skills %}
+<span class="badge bg-primary">{{ skill.name }}</span>
+{% else %}
+<span class="text-muted">Belum ada keahlian.</span>
+{% endfor %}
+</div>
+</div>
+</div>
+{% endblock %}

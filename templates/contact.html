@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Kontak{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-6">
+<h3>Hubungi Saya</h3>
+<form method="POST">
+<div class="mb-3"><label class="form-label">Nama</label><input type="text" name="name" class="form-control" required></div>
+<div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" required></div>
+<div class="mb-3"><label class="form-label">Pesan</label><textarea name="message" class="form-control" rows="5" required></textarea></div>
+<button type="submit" class="btn btn-primary">Kirim Pesan</button>
+</form>
+</div>
+<div class="col-md-6">
+<h3>Informasi Kontak</h3>
+{% if profile %}
+<p><i class="bi bi-envelope"></i> {{ profile.email or 'Tidak tersedia' }}</p>
+{% if profile.github_link %}
+<p><i class="bi bi-github"></i> <a href="{{ profile.github_link }}" target="_blank">{{ profile.github_link }}</a></p>
+{% endif %}
+{% if profile.linkedin_link %}
+<p><i class="bi bi-linkedin"></i> <a href="{{ profile.linkedin_link }}" target="_blank">{{ profile.linkedin_link }}</a></p>
+{% endif %}
+{% else %}
+<p>Informasi kontak belum diatur.</p>
+{% endif %}
+</div>
+</div>
+{% endblock %}

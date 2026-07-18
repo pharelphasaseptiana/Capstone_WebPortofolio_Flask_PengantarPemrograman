@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-md-6">
+<img src="{{ url_for('static', filename='uploads/' + project.image_file) }}" class="img-fluid rounded" alt="{{ project.title }}">
+</div>
+<div class="col-md-6">
+<h2>{{ project.title }}</h2>
+<p class="text-muted">{{ project.created_at.strftime('%d %b %Y') }}</p>
+<p>{{ project.description }}</p>
+<h5>Teknologi:</h5>
+<div class="mb-3">
+{% for tech in project.technologies.split(',') %}
+<span class="badge bg-info text-dark">{{ tech.strip() }}</span>
+{% endfor %}
+</div>
+<div class="d-grid gap-2 d-md-block">
+{% if project.github_link %}
+<a href="{{ project.github_link }}" target="_blank" class="btn btn-dark">GitHub</a>
+{% endif %}
+{% if project.live_link %}
+<a href="{{ project.live_link }}" target="_blank" class="btn btn-primary">Live Demo</a>
+{% endif %}
+<a href="{{ url_for('portfolio') }}" class="btn btn-secondary">Kembali</a>
+</div>
+</div>
+</div>
+{% endblock %}

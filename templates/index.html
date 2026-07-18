@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Beranda{% endblock %}
+{% block content %}
+<div class="hero text-center rounded">
+<div class="container">
+<img src="{{ url_for('static', filename='uploads/' + (profile.photo_file if profile else 'default-profile.jpg')) }}" class="rounded-circle mb-3" width="150" height="150" style="object-fit:cover">
+<h1>{{ profile.name if profile else 'Nama Anda' }}</h1>
+<p class="lead">{{ profile.headline if profile else 'Web Developer' }}</p>
+<p>{{ profile.about[:100] + '...' if profile and profile.about else 'Selamat datang di portofolio saya.' }}</p>
+<a href="{{ url_for('portfolio') }}" class="btn btn-primary">Lihat Karya Saya</a>
+</div>
+</div>
+<div class="mt-5">
+<h2 class="text-center mb-4">Proyek Terbaru</h2>
+<div class="row">
+{% for p in projects %}
+<div class="col-md-4 mb-4">
+<div class="card project-card h-100">
+<img src="{{ url_for('static', filename='uploads/' + p.image_file) }}" class="card-img-top" alt="{{ p.title }}">
+<div class="card-body">
+<h5 class="card-title">{{ p.title }}</h5>
+<p class="card-text">{{ p.description[:100] }}...</p>
+<a href="{{ url_for('project_detail', id=p.id) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+</div>
+</div>
+</div>
+{% else %}
+<div class="col-12 text-center"><p>Belum ada proyek.</p></div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}
