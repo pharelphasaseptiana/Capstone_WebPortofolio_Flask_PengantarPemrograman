@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Edit Proyek{% endblock %}
+{% block content %}
+<h2 class="mb-4">Edit Proyek</h2>
+<form method="POST" enctype="multipart/form-data">
+<div class="mb-3"><label class="form-label">Judul</label><input type="text" name="title" class="form-control" value="{{ project.title }}" required></div>
+<div class="mb-3"><label class="form-label">Deskripsi</label><textarea name="description" class="form-control" rows="4" required>{{ project.description }}</textarea></div>
+<div class="mb-3"><label class="form-label">Teknologi</label><input type="text" name="technologies" class="form-control" value="{{ project.technologies }}"></div>
+<div class="row">
+<div class="col-md-6 mb-3"><label class="form-label">Link GitHub</label><input type="url" name="github_link" class="form-control" value="{{ project.github_link or '' }}"></div>
+<div class="col-md-6 mb-3"><label class="form-label">Link Live</label><input type="url" name="live_link" class="form-control" value="{{ project.live_link or '' }}"></div>
+</div>
+<div class="mb-3"><label class="form-label">Gambar Baru (kosongkan jika tidak diubah)</label><input type="file" name="image" class="form-control" accept="image/*"><small class="text-muted">Saat ini: {{ project.image_file }}</small></div>
+<button type="submit" class="btn btn-primary">Perbarui</button>
+<a href="{{ url_for('dashboard_projects') }}" class="btn btn-secondary">Batal</a>
+</form>
+{% endblock %}

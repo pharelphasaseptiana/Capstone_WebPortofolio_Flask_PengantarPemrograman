@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Dashboard Admin</h2>
+<div class="row mb-4">
+<div class="col-md-6">
+<div class="card text-white bg-primary mb-3">
+<div class="card-body">
+<h5 class="card-title">Total Proyek</h5>
+<p class="card-text display-4">{{ total_projects }}</p>
+<a href="{{ url_for('dashboard_projects') }}" class="btn btn-light btn-sm">Kelola Proyek</a>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="card text-white bg-warning mb-3">
+<div class="card-body">
+<h5 class="card-title">Pesan Belum Dibaca</h5>
+<p class="card-text display-4">{{ unread_messages }}</p>
+<a href="{{ url_for('dashboard_messages') }}" class="btn btn-light btn-sm">Lihat Kotak Masuk</a>
+</div>
+</div>
+</div>
+</div>
+<div class="d-flex gap-2">
+<a href="{{ url_for('dashboard_projects') }}" class="btn btn-outline-primary">Kelola Proyek</a>
+<a href="{{ url_for('dashboard_profile') }}" class="btn btn-outline-secondary">Edit Profil</a>
+<a href="{{ url_for('dashboard_messages') }}" class="btn btn-outline-info">Kotak Masuk</a>
+</div>
+{% endblock %}

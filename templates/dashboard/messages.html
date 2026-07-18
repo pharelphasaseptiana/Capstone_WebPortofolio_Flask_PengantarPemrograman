@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Kotak Masuk{% endblock %}
+{% block content %}
+<h2 class="mb-4">Kotak Masuk</h2>
+<div class="table-responsive">
+<table class="table table-hover">
+<thead><tr><th>Tanggal</th><th>Pengirim</th><th>Email</th><th>Pesan</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody>
+{% for m in messages %}
+<tr class="{% if not m.is_read %}table-primary{% endif %}">
+<td>{{ m.created_at.strftime('%d/%m %H:%M') }}</td>
+<td>{{ m.name }}</td>
+<td>{{ m.email }}</td>
+<td>{{ m.message[:40] }}...</td>
+<td>{% if m.is_read %}<span class="badge bg-secondary">Dibaca</span>{% else %}<span class="badge bg-success">Baru</span>{% endif %}</td>
+<td>
+{% if not m.is_read %}<a href="{{ url_for('mark_read', id=m.id) }}" class="btn btn-sm btn-info">Baca</a>{% endif %}
+<form action="{{ url_for('delete_message', id=m.id) }}" method="POST" style="display:inline" onsubmit="return confirm('Hapus?')">
+<button class="btn btn-sm btn-danger">Hapus</button>
+</form>
+</td>
+</tr>
+{% else %}
+<tr><td colspan="6" class="text-center">Tidak ada pesan.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Kembali</a>
+{% endblock %}

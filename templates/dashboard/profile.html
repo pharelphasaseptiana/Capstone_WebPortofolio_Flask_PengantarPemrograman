@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Edit Profil{% endblock %}
+{% block content %}
+<h2 class="mb-4">Edit Profil</h2>
+<form method="POST" enctype="multipart/form-data">
+<div class="mb-3"><label class="form-label">Nama</label><input type="text" name="name" class="form-control" value="{{ profile.name }}" required></div>
+<div class="mb-3"><label class="form-label">Headline</label><input type="text" name="headline" class="form-control" value="{{ profile.headline }}"></div>
+<div class="mb-3"><label class="form-label">Tentang</label><textarea name="about" class="form-control" rows="4">{{ profile.about }}</textarea></div>
+<div class="mb-3">
+<label class="form-label">Pendidikan</label>
+<textarea name="education" class="form-control" rows="3" placeholder="Contoh: S1 Informatika, Universitas ABC (2022 - sekarang)">{{ profile.education or '' }}</textarea>
+<small class="text-muted">Satu baris per jenjang pendidikan.</small>
+</div>
+<div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ profile.email }}"></div>
+<div class="mb-3"><label class="form-label">Link GitHub</label><input type="url" name="github_link" class="form-control" value="{{ profile.github_link }}"></div>
+<div class="mb-3"><label class="form-label">Link LinkedIn</label><input type="url" name="linkedin_link" class="form-control" value="{{ profile.linkedin_link or '' }}"></div>
+<div class="mb-3"><label class="form-label">Keahlian (pisahkan koma)</label><input type="text" name="skills" class="form-control" value="{{ skills_str }}"></div>
+<div class="mb-3"><label class="form-label">Foto Profil Baru</label><input type="file" name="photo" class="form-control" accept="image/*"></div>
+<button type="submit" class="btn btn-primary">Simpan</button>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Batal</a>
+</form>
+{% endblock %}
