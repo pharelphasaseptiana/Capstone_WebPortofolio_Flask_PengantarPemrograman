@@ -6,7 +6,7 @@
 {% for p in projects %}
 <div class="col-md-4 mb-4">
 <div class="card project-card h-100">
-<img src="{{ url_for('static', filename='uploads/' + p.image_file) }}" class="card-img-top" alt="{{ p.title }}">
+<img src="{{ p.image_file | photo_url }}" class="card-img-top" alt="{{ p.title }}">
 <div class="card-body">
 <h5 class="card-title">{{ p.title }}</h5>
 <p class="card-text">{{ p.description[:100] }}...</p>
